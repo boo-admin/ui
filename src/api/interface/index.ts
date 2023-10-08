@@ -37,6 +37,9 @@ export namespace Login {
     password: string;
   }
   export interface ResLogin {
+    id: number;
+    username: string;
+    nickname: string;
     access_token: string;
   }
   export interface ResAuthButtons {
@@ -86,5 +89,33 @@ export namespace User {
     id: string;
     name: string;
     children?: ResDepartment[];
+  }
+  export interface CurrentUser {
+    id: number;
+    name: string;
+    nickname: string;
+
+    [key: string]: any;
+  }
+
+  export interface UserRecord {
+    id: number;
+    name: string;
+    nickname: string;
+    description: string;
+    is_default: boolean;
+    can_login: boolean;
+    disabled: boolean;
+
+    [key: string]: any;
+  }
+}
+
+export namespace System {
+  export interface DictData {
+    id: number;
+    label: string;
+    value: string;
+    children?: DictData[];
   }
 }

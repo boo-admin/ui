@@ -2,8 +2,8 @@
   <div class="tool-bar-ri">
     <div class="header-icon">
       <AssemblySize id="assemblySize" />
-      <Language id="language" />
-      <SearchMenu id="searchMenu" />
+      <Language v-if="showLanguage" id="language" />
+      <SearchMenu v-if="showSearchMenu" id="searchMenu" />
       <ThemeSetting id="themeSetting" />
       <Message id="message" />
       <Fullscreen id="fullscreen" />
@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useGlobalStore } from "@/stores/modules/global";
 import { useUserStore } from "@/stores/modules/user";
 import AssemblySize from "./components/AssemblySize.vue";
 import Language from "./components/Language.vue";
@@ -25,7 +26,11 @@ import Fullscreen from "./components/Fullscreen.vue";
 import Avatar from "./components/Avatar.vue";
 
 const userStore = useUserStore();
+const globalStore = useGlobalStore();
 const username = computed(() => userStore.userInfo.name);
+
+const showLanguage = computed(() => globalStore.showLanguage);
+const showSearchMenu = computed(() => globalStore.showSearchMenu);
 </script>
 
 <style scoped lang="scss">

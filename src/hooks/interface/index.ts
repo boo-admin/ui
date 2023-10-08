@@ -27,6 +27,6 @@ export namespace HandleData {
 }
 
 export namespace Theme {
-  export type ThemeType = "light" | "inverted" | "dark";
+  export type ThemeType = "light" | "inverted" | "dark" | "stateGrid";
   export type GreyOrWeakType = "grey" | "weak";
 }

@@ -12,5 +12,9 @@ export const asideTheme: Record<Theme.ThemeType, { [key: string]: string }> = {
   dark: {
     "--el-aside-logo-text-color": "#dadada",
     "--el-aside-border-color": "#414243"
+  },
+  stateGrid: {
+    "--el-aside-logo-text-color": "#ffffff",
+    "--el-aside-border-color": "#e4e7ed"
   }
 };

@@ -1,4 +1,66 @@
-# Geeker-Admin
+本项目是 我们基于 [Geeker-Admin](https://gitee.com/HalseySpicy/Geeker-Admin.git) 项目开发的新界面
+
+- 安装依赖
+
+  ```bash
+  pnpm install
+  ```
+
+- 运行
+
+  ```bash
+  pnpm run dev
+  # 或
+  pnpm run serve
+  ```
+
+  如果报错，包含 "Error: error:0308010C:digital envelope routines::unsupported", 则运行下面的
+
+  ```bash
+  export NODE_OPTIONS=--openssl-legacy-provider
+  pnpm run dev
+  # 或
+  pnpm run serve
+  ```
+
+- **Build：**
+
+  ```text
+  # 开发环境
+  pnpm run build:dev
+
+  # 测试环境
+  pnpm run build:test
+
+  # 生产环境
+  pnpm run build:pro
+  ```
+
+- **Lint：**
+
+  ```text
+  # eslint 检测代码
+  pnpm run lint:eslint
+
+  # prettier 格式化代码
+  pnpm run lint:prettier
+
+  # stylelint 格式化样式
+  pnpm run lint:stylelint
+  ```
+
+- **commit：**
+
+  ```text
+  # 提交代码（提交前会自动执行 lint:lint-staged 命令）
+  pnpm run commit
+  ```
+
+- ** 开发注意事项 **
+
+  请看 [开发注意事项](./NOTICES.md)
+
+## Geeker-Admin
 
 ### 介绍 📖
 
@@ -38,91 +100,6 @@ Geeker-Admin 一款基于 Vue3.4、TypeScript、Vite5、Pinia、Element-Plus 开
 - 常用自定义指令开发（权限、复制、水印、拖拽、节流、防抖、长按…）
 - 使用 Prettier 统一格式化代码，集成 ESLint、Stylelint 代码校验规范
 - 使用 husky、lint-staged、commitlint、czg、cz-git 规范提交信息
-
-### 安装使用步骤 📔
-
-- **Clone：**
-
-```text
-# Gitee
-git clone https://gitee.com/HalseySpicy/Geeker-Admin.git
-# GitHub
-git clone https://github.com/HalseySpicy/Geeker-Admin.git
-```
-
-- **Install：**
-
-```text
-pnpm install
-```
-
-- **Run：**
-
-```text
-pnpm dev
-pnpm serve
-```
-
-- **Build：**
-
-```text
-# 开发环境
-pnpm build:dev
-
-# 测试环境
-pnpm build:test
-
-# 生产环境
-pnpm build:pro
-```
-
-- **Lint：**
-
-```text
-# eslint 检测代码
-pnpm lint:eslint
-
-# prettier 格式化代码
-pnpm lint:prettier
-
-# stylelint 格式化样式
-pnpm lint:stylelint
-```
-
-- **commit：**
-
-```text
-# 提交代码（提交前会自动执行 lint:lint-staged 命令）
-pnpm commit
-```
-
-### 项目截图 📷
-
-- 登录页：
-
-![login_light](https://i.imgtg.com/2023/04/13/8tknp.png)
-
-![login_dark](https://i.imgtg.com/2023/04/13/8tmpP.png)
-
-- 首页：
-
-![home_light](https://i.imgtg.com/2023/04/13/8tl1j.png)
-
-![home_dark](https://i.imgtg.com/2023/04/13/8tpfb.png)
-
-- 表格页：
-
-![table_light](https://i.imgtg.com/2023/04/13/8tfMx.png)
-
-![table_dark](https://i.imgtg.com/2023/04/13/8tv8F.png)
-
-- 数据可视化
-
-![dashboard](https://i.imgtg.com/2023/04/14/82Grx.png)
-
-- 数据大屏：
-
-![dataScreen](https://i.imgtg.com/2023/01/16/QP8HF.png)
 
 ### 文件资源目录 📚
 

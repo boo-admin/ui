@@ -8,6 +8,23 @@ import { menuTheme } from "@/styles/theme/menu";
 import { asideTheme } from "@/styles/theme/aside";
 import { headerTheme } from "@/styles/theme/header";
 
+let defaultTheme: Theme.ThemeType = "light";
+
+switch (import.meta.env.VITE_APP_THEME) {
+  case "dark":
+    defaultTheme = "dark";
+    break;
+  case "light":
+    defaultTheme = "light";
+    break;
+  case "inverted":
+    defaultTheme = "inverted";
+    break;
+  case "stateGrid":
+    defaultTheme = "stateGrid";
+    break;
+}
+
 /**
  * @description 全局主题 hooks
  * */
@@ -59,7 +76,7 @@ export const useTheme = () => {
 
   // 设置菜单样式
   const setMenuTheme = () => {
-    let type: Theme.ThemeType = "light";
+    let type: Theme.ThemeType = defaultTheme;
     if (layout.value === "transverse" && headerInverted.value) type = "inverted";
     if (layout.value !== "transverse" && asideInverted.value) type = "inverted";
     if (isDark.value) type = "dark";
@@ -71,7 +88,7 @@ export const useTheme = () => {
 
   // 设置侧边栏样式
   const setAsideTheme = () => {
-    let type: Theme.ThemeType = "light";
+    let type: Theme.ThemeType = defaultTheme;
     if (asideInverted.value) type = "inverted";
     if (isDark.value) type = "dark";
     const theme = asideTheme[type!];
@@ -83,7 +100,7 @@ export const useTheme = () => {
 
   // 设置头部样式
   const setHeaderTheme = () => {
-    let type: Theme.ThemeType = "light";
+    let type: Theme.ThemeType = defaultTheme;
     if (headerInverted.value) type = "inverted";
     if (isDark.value) type = "dark";
     const theme = headerTheme[type!];

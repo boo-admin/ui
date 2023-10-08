@@ -1,10 +1,14 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import { useUserStore } from "@/stores/modules/user";
 import { useAuthStore } from "@/stores/modules/auth";
-import { LOGIN_URL, ROUTER_WHITE_LIST } from "@/config";
+// import { useTabsStore } from "@/stores/modules/tabs";
+// import { useKeepAliveStore } from "@/stores/modules/keepAlive";
+import { UseSSO, LOGIN_URL, LOGIN_REDIRECT_URL, LOGOUT_URL, LOGOUT_REDIRECT_URL, ROUTER_WHITE_LIST } from "@/config";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
-import { staticRouter, errorRouter } from "@/routers/modules/staticRouter";
+import customRoutes from "@/routers/custom";
+
 import NProgress from "@/config/nprogress";
+import { getCurrentUser } from "@/api/users";
 
 const mode = import.meta.env.VITE_ROUTER_MODE;
 
@@ -31,15 +35,33 @@ const routerMode = {
  * */
 const router = createRouter({
   history: routerMode[mode](),
-  routes: [...staticRouter, ...errorRouter],
+  routes: [...customRoutes],
   strict: false,
   scrollBehavior: () => ({ left: 0, top: 0 })
 });
+
+const jumpToSSO = to => {
+  let toPath = "/";
+  if (!!to.query && !!to.query.service) {
+    toPath = to.query.service;
+  }
+  window.location.href = LOGIN_REDIRECT_URL + "?service=" + encodeURIComponent((window as any).appPrefixWithHash + toPath);
+};
 
 /**
  * @description 路由拦截 beforeEach
  * */
 router.beforeEach(async (to, from, next) => {
+  if (UseSSO) {
+    if (to.path.toLocaleLowerCase() === LOGIN_URL) {
+      jumpToSSO(to);
+      return;
+    }
+    if (to.path.toLocaleLowerCase() === LOGOUT_URL) {
+      window.location.href = LOGOUT_REDIRECT_URL;
+      return;
+    }
+  }
   const userStore = useUserStore();
   const authStore = useAuthStore();
 
@@ -47,12 +69,12 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
 
   // 2.动态设置标题
-  const title = import.meta.env.VITE_GLOB_APP_TITLE;
+  const title = import.meta.env.VITE_APP_HEAD_TITLE;
   document.title = to.meta.title ? `${to.meta.title} - ${title}` : title;
 
   // 3.判断是访问登陆页，有 Token 就在当前页面，没有 Token 重置路由到登陆页
   if (to.path.toLocaleLowerCase() === LOGIN_URL) {
-    if (userStore.token) return next(from.fullPath);
+    if (userStore.isLogined) return next(from.fullPath);
     resetRouter();
     return next();
   }
@@ -61,7 +83,7 @@ router.beforeEach(async (to, from, next) => {
   if (ROUTER_WHITE_LIST.includes(to.path)) return next();
 
   // 5.判断是否有 Token，没有重定向到 login 页面
-  if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
+  if (!userStore.isLogined) return checkLogined(to, from, next);
 
   // 6.如果没有菜单列表，就重新请求菜单列表并添加动态路由
   if (!authStore.authMenuListGet.length) {
@@ -73,8 +95,33 @@ router.beforeEach(async (to, from, next) => {
   authStore.setRouteName(to.name as string);
 
   // 8.正常访问页面
-  next();
+  return next();
 });
+
+const checkLogined = async (to, from, next) => {
+  const userStore = useUserStore();
+  // const tabsStore = useTabsStore();
+  // const keepAliveStore = useKeepAliveStore();
+
+  try {
+    // 1.执行登录接口
+    const data = await getCurrentUser();
+    userStore.setUserInfo({ isLogined: true, userInfo: data.data });
+
+    // 2.添加动态路由
+    await initDynamicRouter();
+
+    // 3.清空 tabs、keepAlive 数据
+    // tabsStore.setTabs([]);
+    // keepAliveStore.setKeepAliveName([]);
+
+    // 4.跳转到首页
+    return next({ ...to, replace: true });
+  } catch (e) {
+    userStore.logout();
+    return next({ path: LOGIN_URL, replace: true, query: { service: to.fullPath } });
+  }
+};
 
 /**
  * @description 重置路由

@@ -5,7 +5,7 @@
     :current-page="pageable.pageNum"
     :page-size="pageable.pageSize"
     :page-sizes="[10, 25, 50, 100]"
-    :total="pageable.total"
+    :total="Number(pageable.total) || 0"
     layout="total, sizes, prev, pager, next, jumper"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"

@@ -21,5 +21,12 @@ export const headerTheme: Record<Theme.ThemeType, { [key: string]: string }> = {
     "--el-header-text-color": "#e5eaf3",
     "--el-header-text-color-regular": "#cfd3dc",
     "--el-header-border-color": "#414243"
+  },
+  stateGrid: {
+    "--el-header-logo-text-color": "#ffffff",
+    "--el-header-bg-color": "rgba(0, 122, 119, 1)",
+    "--el-header-text-color": "#ffffff",
+    "--el-header-text-color-regular": "#ffffff",
+    "--el-header-border-color": "#e4e7ed"
   }
 };

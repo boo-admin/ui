@@ -1,3 +1,5 @@
+import { User } from "@/api/interface/index";
+
 export type LayoutType = "vertical" | "classic" | "transverse" | "columns";
 
 export type AssemblySizeType = "large" | "default" | "small";
@@ -23,12 +25,14 @@ export interface GlobalState {
   tabs: boolean;
   tabsIcon: boolean;
   footer: boolean;
+  showLanguage: boolean;
+  showSearchMenu: boolean;
 }
 
 /* UserState */
 export interface UserState {
-  token: string;
-  userInfo: { name: string };
+  isLogined: boolean;
+  userInfo: User.CurrentUser;
 }
 
 /* tabsMenuProps */

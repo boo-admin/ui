@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
-import { HOME_URL, LOGIN_URL } from "@/config";
+import { HOME_URL, LOGIN_URL, LOGIN_REDIRECT_URL, LOGOUT_URL, LOGOUT_REDIRECT_URL } from "@/config";
 
 /**
  * staticRouter (静态路由)
@@ -14,7 +14,20 @@ export const staticRouter: RouteRecordRaw[] = [
     name: "login",
     component: () => import("@/views/login/index.vue"),
     meta: {
-      title: "登录"
+      icon: "Menu",
+      title: "登录",
+      isLink: LOGIN_REDIRECT_URL,
+      isHide: true
+    }
+  },
+  {
+    path: LOGOUT_URL,
+    component: () => import("@/views/logout/index.vue"),
+    meta: {
+      icon: "Menu",
+      title: "登出",
+      isLink: LOGOUT_REDIRECT_URL,
+      isHide: true
     }
   },
   {

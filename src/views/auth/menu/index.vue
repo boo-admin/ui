@@ -20,7 +20,7 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const handleToLogin = () => {
-  userStore.setToken("");
+  userStore.logout();
   router.push(LOGIN_URL);
 };
 </script>

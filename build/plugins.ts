@@ -15,7 +15,20 @@ import vueSetupExtend from "unplugin-vue-setup-extend-plus/vite";
  * @param viteEnv
  */
 export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOption[])[] => {
-  const { VITE_GLOB_APP_TITLE, VITE_REPORT, VITE_PWA } = viteEnv;
+  const {
+    VITE_APP_SESSION_KEY,
+    VITE_APP_BASE_PATH_WITHOUT_SLASH,
+    VITE_APP_BASE_PATH_WITH_SLASH,
+    VITE_APP_API_URL,
+    VITE_APP_APP_PREFIX_WITHOUT_SLASH,
+    VITE_APP_HEAD_TITLE,
+    VITE_APP_FOOT_TITLE,
+    VITE_APP_LOGIN_URL,
+    VITE_APP_LOGOUT_URL,
+    VITE_APP_USE_SSO,
+    VITE_REPORT,
+    VITE_PWA
+  } = viteEnv;
   return [
     vue(),
     // vue 可以使用 jsx/tsx 语法
@@ -30,7 +43,18 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
     createHtmlPlugin({
       minify: true,
       inject: {
-        data: { title: VITE_GLOB_APP_TITLE }
+        data: {
+          VITE_APP_SESSION_KEY: VITE_APP_SESSION_KEY,
+          VITE_APP_BASE_PATH_WITHOUT_SLASH: VITE_APP_BASE_PATH_WITHOUT_SLASH,
+          VITE_APP_BASE_PATH_WITH_SLASH: VITE_APP_BASE_PATH_WITH_SLASH,
+          VITE_APP_API_URL: VITE_APP_API_URL,
+          VITE_APP_APP_PREFIX_WITHOUT_SLASH: VITE_APP_APP_PREFIX_WITHOUT_SLASH,
+          VITE_APP_HEAD_TITLE: VITE_APP_HEAD_TITLE,
+          VITE_APP_FOOT_TITLE: VITE_APP_FOOT_TITLE,
+          VITE_APP_LOGIN_URL: VITE_APP_LOGIN_URL,
+          VITE_APP_LOGOUT_URL: VITE_APP_LOGOUT_URL,
+          VITE_APP_USE_SSO: VITE_APP_USE_SSO
+        }
       }
     }),
     // 使用 svg 图标
@@ -79,12 +103,12 @@ const createCompression = (viteEnv: ViteEnv): PluginOption | PluginOption[] => {
  * @param viteEnv
  */
 const createVitePwa = (viteEnv: ViteEnv): PluginOption | PluginOption[] => {
-  const { VITE_GLOB_APP_TITLE } = viteEnv;
+  const { VITE_APP_HEAD_TITLE } = viteEnv;
   return VitePWA({
     registerType: "autoUpdate",
     manifest: {
-      name: VITE_GLOB_APP_TITLE,
-      short_name: VITE_GLOB_APP_TITLE,
+      name: VITE_APP_HEAD_TITLE,
+      short_name: VITE_APP_HEAD_TITLE,
       theme_color: "#ffffff",
       icons: [
         {

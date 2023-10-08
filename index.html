@@ -2,11 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vue.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <!-- link rel="icon" href="<%- VITE_APP_APP_PREFIX_WITHOUT_SLASH %>/favicon.ico" / -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%- title %></title>
+    <title><%- VITE_APP_HEAD_TITLE %></title>
   </head>
   <body>
+    <noscript>
+      <strong>We're sorry but Admin UI doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <script type="text/javascript">
+      var basePathWithoutSlash = "<%- VITE_APP_BASE_PATH_WITHOUT_SLASH %>";
+      var basePathWithSlash = "<%- VITE_APP_BASE_PATH_WITH_SLASH %>";
+      var apiPrefix = "<%- VITE_APP_API_URL %>";
+      var appPrefixWithoutHash = "<%- VITE_APP_APP_PREFIX_WITHOUT_SLASH %>";
+      var appPrefixWithHash = appPrefixWithoutHash + "/#";
+      var appTitle = "<%- VITE_APP_HEAD_TITLE %>";
+      var footTitle = "<%- VITE_APP_FOOT_TITLE %>";
+      var loginRedirectURL = "<%- VITE_APP_LOGIN_URL %>";
+      var logoutRedirectURL = "<%- VITE_APP_LOGOUT_URL %>";
+      var useSSO = <%- VITE_APP_USE_SSO %>;
+
+
+      var params = new URLSearchParams(window.location.search);
+      var defaultAppID = params.get("app");
+      if (!defaultAppID || defaultAppID == "") {
+        if (!!window.location.hash && window.location.hash != "") {
+          var idx = window.location.hash.indexOf("?");
+          if (idx > 0) {
+            params = new URLSearchParams(window.location.hash.substring(idx + 1));
+            defaultAppID = params.get("app");
+          }
+        }
+
+        if (!defaultAppID || defaultAppID == "") {
+          defaultAppID = "default";
+        }
+      }
+    </script>
     <div id="app">
       <style>
         html,
@@ -92,7 +125,7 @@
       </div>
     </div>
     <script>
-      const globalState = JSON.parse(window.localStorage.getItem("geeker-global"));
+      const globalState = JSON.parse(window.localStorage.getItem("boo-global"));
       if (globalState) {
         const dot = document.querySelectorAll(".dot i");
         const html = document.querySelector("html");
