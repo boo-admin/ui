@@ -60,6 +60,8 @@
      package.json
      src\routers\custom.ts
      src\config\custom.ts
+     src\assets\json\customButtonList.json
+     src\assets\json\customMenuList.json
      .env
      .env.test
      .env.development
