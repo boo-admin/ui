@@ -106,7 +106,7 @@ const checkLogined = async (to, from, next) => {
   try {
     // 1.执行登录接口
     const data = await getCurrentUser();
-    userStore.setUserInfo({ isLogined: true, userInfo: data.data });
+    userStore.setUserInfo({ isLogined: true, userInfo: data });
 
     // 2.添加动态路由
     await initDynamicRouter();

@@ -24,26 +24,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { watch, ref } from "vue";
 import { LOGOUT_URL } from "@/config";
-import { CUSTOM_USER_INFO_PAGE, CUSTOM_USER_INFO_PATH } from "@/config/custom";
+import { CUSTOM_USER_INFO_PAGE, CUSTOM_USER_INFO_PATH, DEFAULT_AVATER_URL } from "@/config/custom";
 import { useRouter } from "vue-router";
 // import { logoutApi } from "@/api/modules/login";
 import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
 import InfoDialog from "./InfoDialog.vue";
 import PasswordDialog from "./PasswordDialog.vue";
-import { DEFAULT_AVATER_URL } from "@/config/custom";
 
 const router = useRouter();
 const userStore = useUserStore();
 
-const avatarURL = computed(() => {
-  if (userStore.userInfo.avater) {
-    return userStore.userInfo.avater;
+const avatarURL = ref(userStore.userInfo.avater ?? DEFAULT_AVATER_URL);
+watch(
+  () => userStore.userInfo.avater,
+  newValue => {
+    avatarURL.value = newValue ?? DEFAULT_AVATER_URL;
   }
-  return DEFAULT_AVATER_URL;
-});
+);
 
 // 退出登录
 const logout = () => {

@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { watch, ref } from "vue";
 import { useGlobalStore } from "@/stores/modules/global";
 import { useUserStore } from "@/stores/modules/user";
 import AssemblySize from "./components/AssemblySize.vue";
@@ -27,10 +27,21 @@ import Avatar from "./components/Avatar.vue";
 
 const userStore = useUserStore();
 const globalStore = useGlobalStore();
-const username = computed(() => userStore.userInfo.name);
 
-const showLanguage = computed(() => globalStore.showLanguage);
-const showSearchMenu = computed(() => globalStore.showSearchMenu);
+const username = ref(userStore.userInfo.name);
+watch(
+  () => userStore.userInfo.name,
+  newValue => {
+    if (newValue) {
+      username.value = newValue;
+    } else {
+      username.value = "未登录";
+    }
+  }
+);
+
+const showLanguage = ref(globalStore.showLanguage);
+const showSearchMenu = ref(globalStore.showSearchMenu);
 </script>
 
 <style scoped lang="scss">

@@ -16,7 +16,7 @@ export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 const axiosCanceler = new AxiosCanceler();
 
-class RequestHttp {
+class BaseRequestHttp {
   service: AxiosInstance;
   public constructor(config: AxiosRequestConfig) {
     // instantiation
@@ -89,10 +89,30 @@ class RequestHttp {
       }
     );
   }
+}
 
+class RequestHttp extends BaseRequestHttp {
   /**
    * @description 常用请求方法封装
    */
+  get<T>(url: string, params?: object, _object = {}): Promise<T> {
+    return this.service.get(url, { params, ..._object });
+  }
+  post<T>(url: string, params?: object | string, _object = {}): Promise<T> {
+    return this.service.post(url, params, _object);
+  }
+  put<T>(url: string, params?: object, _object = {}): Promise<T> {
+    return this.service.put(url, params, _object);
+  }
+  delete<T>(url: string, params?: any, _object = {}): Promise<T> {
+    return this.service.delete(url, { params, ..._object });
+  }
+  download(url: string, params?: object, _object = {}): Promise<BlobPart> {
+    return this.service.post(url, params, { ..._object, responseType: "blob" });
+  }
+}
+
+class MockRequestHttp extends BaseRequestHttp {
   get<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
     return this.service.get(url, { params, ..._object });
   }
@@ -110,7 +130,7 @@ class RequestHttp {
   }
 }
 
-export const mock = new RequestHttp({
+export const mock = new MockRequestHttp({
   // 默认地址请求地址，可在 .env.** 文件中修改
   baseURL: import.meta.env.VITE_MOCK_API_URL as string,
   // 设置超时时间

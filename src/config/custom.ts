@@ -1,3 +1,5 @@
+import imgUrl from "@/assets/images/avatar.gif";
+
 // 显示语言选择
 export const DEFAULT_SHOW_LANGUAGE: boolean = true;
 
@@ -5,7 +7,7 @@ export const DEFAULT_SHOW_LANGUAGE: boolean = true;
 export const DEFAULT_SHOW_SEARCH_MENU: boolean = true;
 
 // 显示搜索框
-export const DEFAULT_AVATER_URL: string = "@/assets/images/avatar.gif";
+export const DEFAULT_AVATER_URL: string = imgUrl;
 
 // 用自定义页面显示用户信息
 export const CUSTOM_USER_INFO_PAGE: boolean = false;
