@@ -55,10 +55,12 @@ router.beforeEach(async (to, from, next) => {
   if (UseSSO) {
     if (to.path.toLocaleLowerCase() === LOGIN_URL) {
       jumpToSSO(to);
+      next(false);
       return;
     }
     if (to.path.toLocaleLowerCase() === LOGOUT_URL) {
       window.location.href = LOGOUT_REDIRECT_URL;
+      next(false);
       return;
     }
   }
