@@ -104,8 +104,48 @@ export namespace User {
     nickname: string;
     description: string;
     is_default: boolean;
-    can_login: boolean;
     disabled: boolean;
+    created_at: string;
+    updated_at: string;
+
+    [key: string]: any;
+  }
+}
+
+export namespace boo {
+  export interface Department {
+    id: number;
+    parent_id: number;
+    name: string;
+    order_num: number;
+    children?: Department[];
+    created_at: string;
+    updated_at: string;
+    fields: { [key: string]: any };
+
+    [key: string]: any;
+  }
+
+  export interface User {
+    id: number;
+    name: string;
+    nickname: string;
+    description: string;
+    disabled: boolean;
+    created_at: string;
+    updated_at: string;
+
+    [key: string]: any;
+  }
+
+  export interface Employee {
+    id: number;
+    department_id: number;
+    name: string;
+    nickname: string;
+    fields: { [key: string]: any };
+    created_at: string;
+    updated_at: string;
 
     [key: string]: any;
   }

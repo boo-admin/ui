@@ -2,12 +2,13 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequ
 import { showFullScreenLoading, tryHideFullScreenLoading } from "@/components/Loading/fullScreen";
 import { LOGIN_URL } from "@/config";
 import { ElMessage } from "element-plus";
-import { ResultData } from "@/api/interface";
+import { ReqPage, ResPage, ResultData } from "@/api/interface";
 import { ResultEnum } from "@/enums/httpEnum";
 import { checkStatus } from "./helper/checkStatus";
 import { AxiosCanceler } from "./helper/axiosCancel";
 import { useUserStore } from "@/stores/modules/user";
 import router from "@/routers";
+import { isNumber } from "@/utils/is";
 
 export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   loading?: boolean;
@@ -73,11 +74,18 @@ class BaseRequestHttp {
           return Promise.reject(data);
         }
         // 成功请求（在页面上除非特殊情况，否则不用处理失败逻辑）
-        return data || {};
+        return data;
       },
       async (error: AxiosError) => {
         const { response } = error;
         tryHideFullScreenLoading();
+        if (response?.status === 401) {
+          const userStore = useUserStore();
+          userStore.logout();
+          checkStatus(response.status, response);
+          router.push(LOGIN_URL);
+          return Promise.reject(error);
+        }
         // 请求超时 && 网络错误单独判断，没有 response
         if (error.message.indexOf("timeout") !== -1) ElMessage.error("请求超时！请您稍后重试");
         if (error.message.indexOf("Network Error") !== -1) ElMessage.error("网络错误！请您稍后重试");
@@ -139,7 +147,7 @@ export const mock = new MockRequestHttp({
   withCredentials: true
 });
 
-export default new RequestHttp({
+const localHttp = new RequestHttp({
   // 默认地址请求地址，可在 .env.** 文件中修改
   baseURL: (window as any).apiPrefix as string,
   // 设置超时时间
@@ -147,3 +155,107 @@ export default new RequestHttp({
   // 跨域时候允许携带凭证
   withCredentials: true
 });
+
+export default localHttp;
+
+export const fetchListWithFunc = <T>(
+  list: (params: ReqPage) => Promise<Array<T>>,
+  count?: (params: ReqPage) => Promise<number>
+): ((params) => Promise<ResultData<ResPage<T>>>) => {
+  if (!count) {
+    return (params: ReqPage) => {
+      return list(params).then(data => {
+        if (!data) {
+          data = [];
+        }
+        return {
+          code: "",
+          msg: "",
+          data: {
+            total: data.length,
+            pageNum: 0,
+            pageSize: 0,
+            list: data
+          }
+        };
+      });
+    };
+  }
+
+  return (params: ReqPage) => {
+    return count(params).then(total => {
+      return list(params).then(data => {
+        return {
+          code: "",
+          msg: "",
+          data: {
+            total: total,
+            pageNum: params.pageNum,
+            pageSize: params.pageSize,
+            list: data
+          }
+        } as ResultData<ResPage<T>>;
+      });
+    });
+  };
+};
+
+export const wrapResultWithFunc = <T>(list: (params) => Promise<T>): ((params) => Promise<ResultData<T>>) => {
+  return params => {
+    return list(params).then(data => {
+      return {
+        code: "",
+        msg: "",
+        data: data
+      };
+    });
+  };
+};
+
+// export const fetchListWithURL = (list: string, count?: string) => {
+//   if (!count) {
+//     return params => {
+//       return localHttp.get<any[]>(list).then(data => {
+//         return {
+//           code: "",
+//           msg: "",
+//           data: {
+//             total: data.length,
+//             list: data
+//           }
+//         };
+//       });
+//     };
+//   }
+//   return params => {
+//     return localHttp.get<number>(count, params).then(total => {
+//       return localHttp.get<any[]>(list, params).then(data => {
+//         return {
+//           code: "",
+//           msg: "",
+//           data: {
+//             list: data,
+//             total: total
+//           }
+//         };
+//       });
+//     });
+//   };
+// };
+
+// 更新一个对象
+export const updateObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T[]> => {
+  let id: string = params.id.toString();
+  if (isNumber(params.id)) {
+    id = params.id.toFixed(0);
+  }
+  return localHttp.get<T[]>(url + "/" + id, params);
+};
+
+export const deleteObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T> => {
+  let id: string = params.id.toString();
+  if (isNumber(params.id)) {
+    id = params.id.toFixed(0);
+  }
+  return localHttp.delete(url + "/" + id, params);
+};

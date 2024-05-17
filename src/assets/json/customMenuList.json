@@ -869,12 +869,26 @@
           }
         },
         {
-          "path": "/system/departmentManage",
+          "path": "/boo/system/departmentManage",
           "name": "departmentManage",
-          "component": "/system/departmentManage/index",
+          "component": "/boo/system/departments/index",
           "meta": {
             "icon": "Menu",
             "title": "部门管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/boo/system/employeeManage",
+          "name": "employeeManage",
+          "component": "/boo/system/employees/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "通讯录",
             "isLink": "",
             "isHide": false,
             "isFull": false,
