@@ -9,23 +9,15 @@
       :model="drawerProps.row"
       :hide-required-asterisk="drawerProps.isView"
     >
-      <el-form-item label="用户头像" prop="avatar">
-        <UploadImg v-model:image-url="drawerProps.row!.avatar" width="135px" height="135px" :file-size="3">
-          <template #empty>
-            <el-icon><Avatar /></el-icon>
-            <span>请上传头像</span>
-          </template>
-          <template #tip> 头像大小不能超过 3M </template>
-        </UploadImg>
-      </el-form-item>
-      <el-form-item label="用户照片" prop="photo">
-        <UploadImgs v-model:file-list="drawerProps.row!.photo" height="140px" width="140px" border-radius="50%">
-          <template #empty>
-            <el-icon><Picture /></el-icon>
-            <span>请上传照片</span>
-          </template>
-          <template #tip> 照片大小不能超过 5M </template>
-        </UploadImgs>
+      <el-form-item label="部门名称" prop="name">
+        <el-tree-select
+          v-model="drawerProps.row!.department_id"
+          node-key="id"
+          value-key="id"
+          clearable
+          :data="drawerProps.departmentTree"
+          :props="departmentTreeProps"
+        />
       </el-form-item>
       <el-form-item label="用户名" prop="name">
         <el-input v-model="drawerProps.row!.name" placeholder="请填写用户姓名" clearable></el-input>
@@ -36,8 +28,8 @@
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="drawerProps.row!.fields!.email" placeholder="请填写邮箱" clearable></el-input>
       </el-form-item>
-      <el-form-item label="工号" prop="address">
-        <el-input v-model="drawerProps.row!.fields!.address" placeholder="请填写居住地址" clearable></el-input>
+      <el-form-item label="工号" prop="number">
+        <el-input v-model="drawerProps.row!.fields!.number" placeholder="请填写居住地址" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -51,17 +43,14 @@
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { boo } from "@/api/interface";
-import UploadImg from "@/components/Upload/Img.vue";
-import UploadImgs from "@/components/Upload/Imgs.vue";
 
 const rules = reactive({
-  avatar: [{ required: true, message: "请上传用户头像" }],
-  photo: [{ required: true, message: "请上传用户照片" }],
   name: [{ required: true, message: "请填写用户名" }],
   nickname: [{ required: true, message: "请填写用户昵称" }],
+  "fields.email": [{ required: true, message: "请填写邮箱" }],
   fields: {
     email: [{ required: true, message: "请填写邮箱" }],
-    address: [{ required: true, message: "请填写居住地址" }]
+    number: [{ required: true, message: "请填写工号" }]
   }
 });
 
@@ -69,6 +58,7 @@ interface DrawerProps {
   title: string;
   isView: boolean;
   row: Partial<boo.Employee>;
+  departmentTree?: boo.Department[];
   api?: (params: any) => Promise<any>;
   getTableList?: () => void;
 }
@@ -79,7 +69,12 @@ const drawerProps = ref<DrawerProps>({
   title: "",
   row: {
     fields: {}
-  }
+  },
+  departmentTree: []
+});
+
+const departmentTreeProps = ref({
+  label: "name"
 });
 
 // 接收父组件传过来的参数

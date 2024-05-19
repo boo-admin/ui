@@ -1,6 +1,7 @@
 <template>
   <div class="main-box">
     <TreeFilter
+      ref="employeeDepartments"
       label="name"
       title="部门列表"
       :request-api="getEmployeeDepartmentWithResultData"
@@ -36,7 +37,7 @@
 <script setup lang="ts" name="useTreeFilter">
 import { ref, reactive } from "vue";
 import { boo } from "@/api/interface";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
 import ProTable from "@/components/ProTable/index.vue";
@@ -52,8 +53,8 @@ import {
   deleteEmployee,
   updateEmployee,
   addEmployee,
-  exportEmployeeInfo,
-  BatchAddEmployee,
+  exportEmployeeURL,
+  importEmployees,
   getEmployeeDepartment
 } from "@/api/users";
 
@@ -61,25 +62,27 @@ const getEmployeeDepartmentWithResultData = wrapResultWithFunc(getEmployeeDepart
 const getEmployeeListWithResultData = fetchListWithFunc(getEmployeeList, getEmployeeCount);
 
 // ProTable 实例
+const employeeDepartments = ref();
+
+// ProTable 实例
 const proTable = ref<ProTableInstance>();
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable(之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
-const initParam = reactive({ departmentId: "1" });
+const initParam = reactive({ department_id: "1" });
 
 // 树形筛选切换
 const changeTreeFilter = (val: string) => {
-  ElMessage.success("请注意查看请求参数变化 🤔");
   proTable.value!.pageable.pageNum = 1;
-  initParam.departmentId = val;
+  initParam.department_id = val;
 };
 
 // 表格配置项
 const columns = reactive<ColumnProps<boo.Employee>[]>([
   { type: "index", label: "#", width: 80 },
-  { prop: "username", label: "用户姓名", width: 120, search: { el: "input" } },
-  { prop: "idCard", label: "身份证号" },
-  { prop: "email", label: "邮箱" },
-  { prop: "address", label: "居住地址" },
+  { prop: "name", label: "用户名", width: 120, search: { el: "input" } },
+  { prop: "nickname", label: "昵称" },
+  { prop: "fields.number", label: "工号" },
+  { prop: "fields.email", label: "邮箱" },
   { prop: "created_at", label: "创建时间", width: 180 },
   { prop: "operation", label: "操作", width: 330, fixed: "right" }
 ]);
@@ -93,7 +96,7 @@ const deleteAccount = async (params: boo.Employee) => {
 // 导出用户列表
 const downloadFile = async () => {
   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportEmployeeInfo, "用户列表", proTable.value?.searchParam)
+    useDownload(exportEmployeeURL(proTable.value?.searchParam), "用户列表", proTable.value?.searchParam)
   );
 };
 
@@ -102,8 +105,8 @@ const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
 const batchAdd = () => {
   const params = {
     title: "用户",
-    tempApi: exportEmployeeInfo,
-    importApi: BatchAddEmployee,
+    templateApi: exportEmployeeURL({}),
+    importApi: importEmployees,
     getTableList: proTable.value?.getTableList
   };
   dialogRef.value?.acceptParams(params);
@@ -116,6 +119,7 @@ const openDrawer = (title: string, row: Partial<boo.Employee> = {}) => {
     title,
     isView: title === "查看",
     row: { ...row },
+    departmentTree: employeeDepartments.value?.treeData,
     api: title === "新增" ? addEmployee : title === "编辑" ? updateEmployee : undefined,
     getTableList: proTable.value?.getTableList
   };

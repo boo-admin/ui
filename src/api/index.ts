@@ -100,6 +100,13 @@ class BaseRequestHttp {
 }
 
 class RequestHttp extends BaseRequestHttp {
+  getUri(method: string, url: string, params: object = {}): string {
+    return this.service.getUri({
+      method: method,
+      url: url,
+      params: params
+    });
+  }
   /**
    * @description 常用请求方法封装
    */
@@ -249,7 +256,7 @@ export const updateObject = <T>(url: string, params: { id: any; [key: string]: a
   if (isNumber(params.id)) {
     id = params.id.toFixed(0);
   }
-  return localHttp.get<T[]>(url + "/" + id, params);
+  return localHttp.put<T[]>(url + "/" + id, params);
 };
 
 export const deleteObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T> => {

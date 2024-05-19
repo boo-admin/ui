@@ -40,12 +40,12 @@ export const deleteDepartment = (params: { id: any }) => {
   return deleteObject(`/v1/boo/departments`, params);
 };
 
-export const getEmployeeList = () => {
-  return http.get<boo.Employee[]>(`/v1/boo/employees`);
+export const getEmployeeList = params => {
+  return http.get<boo.Employee[]>(`/v1/boo/employees`, params);
 };
 
-export const getEmployeeCount = () => {
-  return http.get<number>(`/v1/boo/employees/count`);
+export const getEmployeeCount = params => {
+  return http.get<number>(`/v1/boo/employees/count`, params);
 };
 
 export const deleteEmployee = (params: { id: any }) => {
@@ -70,12 +70,12 @@ export const addEmployee = (params: { id: any; [key: string]: any }) => {
   return http.post(`/v1/boo/employees`, params);
 };
 
-export const exportEmployeeInfo = () => {
-  return http.get(`/v1/boo/employees/export`);
+export const exportEmployeeURL = (params): string => {
+  return http.getUri("get", "/v1/boo/employees/export/xlsx", params);
 };
 
-export const BatchAddEmployee = () => {
-  return http.post(`/v1/boo/employees/batch_add`);
+export const importEmployees = params => {
+  return http.post(`/v1/boo/employees/import`, params);
 };
 
 export const getEmployeeDepartment = () => {

@@ -9,7 +9,7 @@
       :model="drawerProps.row"
       :hide-required-asterisk="drawerProps.isView"
     >
-      <el-form-item label="部门名称" prop="name">
+      <el-form-item label="上级部门" prop="name">
         <el-tree-select
           v-model="drawerProps.row!.parent_id"
           node-key="id"

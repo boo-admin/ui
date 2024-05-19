@@ -49,7 +49,7 @@ export interface ExcelParameterProps {
   title: string; // 标题
   fileSize?: number; // 上传文件的大小
   fileType?: File.ExcelMimeType[]; // 上传文件的类型
-  tempApi?: (params: any) => Promise<any>; // 下载模板的Api
+  templateApi?: string | ((params: any) => Promise<any>); // 下载模板的URL 或 Api
   importApi?: (params: any) => Promise<any>; // 批量导入的Api
   getTableList?: () => void; // 获取表格数据的Api
 }
@@ -75,8 +75,10 @@ const acceptParams = (params: ExcelParameterProps) => {
 
 // Excel 导入模板下载
 const downloadTemp = () => {
-  if (!parameter.value.tempApi) return;
-  useDownload(parameter.value.tempApi, `${parameter.value.title}模板`);
+  if (parameter.value.templateApi) {
+    useDownload(parameter.value.templateApi, `${parameter.value.title}模板`);
+    return;
+  }
 };
 
 // 文件上传
