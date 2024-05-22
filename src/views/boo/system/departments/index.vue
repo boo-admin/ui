@@ -33,7 +33,7 @@
 
 <script setup lang="tsx" name="departmentTable">
 import { reactive, ref } from "vue";
-import { wrapResultWithFunc } from "@/api";
+import { wrapArrayResultWithFunc } from "@/api";
 import { boo } from "@/api/interface";
 import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
@@ -43,7 +43,7 @@ import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { deleteDepartment, editDepartment, addDepartment, getDepartmentTreeList } from "@/api/users";
 
-const getDepartmentList = wrapResultWithFunc(getDepartmentTreeList);
+const getDepartmentList = wrapArrayResultWithFunc(getDepartmentTreeList);
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();

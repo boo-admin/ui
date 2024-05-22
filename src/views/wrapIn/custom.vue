@@ -1,9 +1,9 @@
 <template>
-  <HwFrame :src="frameSrc"></HwFrame>
+  <BooFrame :src="frameSrc"></BooFrame>
 </template>
 <script setup lang="ts" name="customWrapIn">
 import { ref } from "vue";
-import HwFrame from "@/components/HwFrame/index.vue";
+import BooFrame from "@/components/BooFrame/index.vue";
 import { useRoute } from "vue-router";
 
 const props = defineProps(["src"]);

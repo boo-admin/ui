@@ -192,6 +192,9 @@ export const fetchListWithFunc = <T>(
   return (params: ReqPage) => {
     return count(params).then(total => {
       return list(params).then(data => {
+        if (!data) {
+          data = [];
+        }
         return {
           code: "",
           msg: "",
@@ -207,9 +210,14 @@ export const fetchListWithFunc = <T>(
   };
 };
 
-export const wrapResultWithFunc = <T>(list: (params) => Promise<T>): ((params) => Promise<ResultData<T>>) => {
+export const wrapObjectResultWithFunc = <T>(
+  list: (params) => Promise<Partial<T>>
+): ((params) => Promise<ResultData<Partial<T>>>) => {
   return params => {
     return list(params).then(data => {
+      if (!data) {
+        data = {};
+      }
       return {
         code: "",
         msg: "",
@@ -219,36 +227,20 @@ export const wrapResultWithFunc = <T>(list: (params) => Promise<T>): ((params) =
   };
 };
 
-// export const fetchListWithURL = (list: string, count?: string) => {
-//   if (!count) {
-//     return params => {
-//       return localHttp.get<any[]>(list).then(data => {
-//         return {
-//           code: "",
-//           msg: "",
-//           data: {
-//             total: data.length,
-//             list: data
-//           }
-//         };
-//       });
-//     };
-//   }
-//   return params => {
-//     return localHttp.get<number>(count, params).then(total => {
-//       return localHttp.get<any[]>(list, params).then(data => {
-//         return {
-//           code: "",
-//           msg: "",
-//           data: {
-//             list: data,
-//             total: total
-//           }
-//         };
-//       });
-//     });
-//   };
-// };
+export const wrapArrayResultWithFunc = <T>(list: (params) => Promise<T[]>): ((params) => Promise<ResultData<T[]>>) => {
+  return params => {
+    return list(params).then(data => {
+      if (!data) {
+        data = [];
+      }
+      return {
+        code: "",
+        msg: "",
+        data: data
+      };
+    });
+  };
+};
 
 // 更新一个对象
 export const updateObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T[]> => {

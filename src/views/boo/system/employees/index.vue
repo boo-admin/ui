@@ -5,7 +5,7 @@
       label="name"
       title="部门列表"
       :request-api="getEmployeeDepartmentWithResultData"
-      :default-value="initParam.departmentId"
+      :default-value="initParam.department_id"
       @change="changeTreeFilter"
     />
     <div class="table-box">
@@ -46,7 +46,7 @@ import ImportExcel from "@/components/ImportExcel/index.vue";
 import EmployeeDrawer from "@/views/boo/system/employees/drawer.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View } from "@element-plus/icons-vue";
-import { fetchListWithFunc, wrapResultWithFunc } from "@/api";
+import { fetchListWithFunc, wrapArrayResultWithFunc } from "@/api";
 import {
   getEmployeeList,
   getEmployeeCount,
@@ -58,7 +58,7 @@ import {
   getEmployeeDepartment
 } from "@/api/users";
 
-const getEmployeeDepartmentWithResultData = wrapResultWithFunc(getEmployeeDepartment);
+const getEmployeeDepartmentWithResultData = wrapArrayResultWithFunc(getEmployeeDepartment);
 const getEmployeeListWithResultData = fetchListWithFunc(getEmployeeList, getEmployeeCount);
 
 // ProTable 实例
