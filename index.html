@@ -6,11 +6,6 @@
     <!-- link rel="icon" href="<%- VITE_APP_APP_PREFIX_WITHOUT_SLASH %>/favicon.ico" / -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%- VITE_APP_HEAD_TITLE %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but Admin UI doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
     <script type="text/javascript">
       var basePathWithoutSlash = "<%- VITE_APP_BASE_PATH_WITHOUT_SLASH %>";
       var basePathWithSlash = "<%- VITE_APP_BASE_PATH_WITH_SLASH %>";
@@ -40,6 +35,11 @@
         }
       }
     </script>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but Admin UI doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
     <div id="app">
       <style>
         html,

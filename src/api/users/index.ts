@@ -1,5 +1,5 @@
 import http, { deleteObject, updateObject } from "@/api";
-import { User, boo } from "@/api/interface/index";
+import { RequestPage, User, boo } from "@/api/interface/index";
 import { isNumber } from "@/utils/is";
 
 // 用户退出登录
@@ -40,7 +40,7 @@ export const deleteDepartment = (params: { id: any }) => {
   return deleteObject(`/v1/boo/departments`, params);
 };
 
-export const getEmployeeList = params => {
+export const getEmployeeList = <T extends RequestPage>(params: T) => {
   return http.get<boo.Employee[]>(`/v1/boo/employees`, params);
 };
 

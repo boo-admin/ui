@@ -121,7 +121,7 @@ const openDrawer = (title: string, row: Partial<boo.Employee> = {}) => {
     row: { ...row },
     departmentTree: employeeDepartments.value?.treeData,
     api: title === "新增" ? addEmployee : title === "编辑" ? updateEmployee : undefined,
-    getTableList: proTable.value?.getTableList
+    update: () => proTable.value?.getTableList()
   };
   drawerRef.value?.acceptParams(params);
 };

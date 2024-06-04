@@ -5,7 +5,7 @@
 import { ref } from "vue";
 
 const props = defineProps({
-  src: String
+  src: { type: String, required: true }
 });
 
 // console.log("loading");

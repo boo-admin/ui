@@ -9,7 +9,11 @@ export const checkStatus = (status: number, response) => {
   const msg = toMessage(response);
   switch (status) {
     case 400:
-      ElMessage.error("请求失败！请您稍后重试");
+      if (msg) {
+        ElMessage.error("请求失败: " + msg);
+      } else {
+        ElMessage.error("请求失败！请您稍后重试");
+      }
       break;
     case 401:
       ElMessage.error("登录失效！请您重新登录");
@@ -21,14 +25,18 @@ export const checkStatus = (status: number, response) => {
       ElMessage.error("你所访问的资源不存在！");
       break;
     case 405:
-      ElMessage.error("请求方式错误！请您稍后重试");
+      if (msg) {
+        ElMessage.error("请求方式错误: " + msg);
+      } else {
+        ElMessage.error("请求方式错误！请您稍后重试");
+      }
       break;
     case 408:
       ElMessage.error("请求超时！请您稍后重试");
       break;
     case 500:
       if (msg) {
-        ElMessage.error("服务异常: " + response.data.message);
+        ElMessage.error("服务异常: " + msg);
       } else {
         ElMessage.error("服务异常！");
       }
@@ -44,7 +52,7 @@ export const checkStatus = (status: number, response) => {
       break;
     default:
       if (msg) {
-        ElMessage.error("请求失败: " + response.data.message);
+        ElMessage.error("请求失败: " + msg);
       } else {
         ElMessage.error("请求失败！");
       }

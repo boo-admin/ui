@@ -112,6 +112,12 @@ export namespace User {
   }
 }
 
+// 分页请求参数
+export interface RequestPage {
+  page_index: number;
+  page_size: number;
+}
+
 export namespace boo {
   export interface Department {
     id: number;
@@ -146,6 +152,14 @@ export namespace boo {
     fields: { [key: string]: any };
     created_at: string;
     updated_at: string;
+
+    [key: string]: any;
+  }
+
+  export interface CurrentUser {
+    id: number;
+    name: string;
+    nickname: string;
 
     [key: string]: any;
   }

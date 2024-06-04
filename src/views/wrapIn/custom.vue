@@ -6,7 +6,10 @@ import { ref } from "vue";
 import BooFrame from "@/components/BooFrame/index.vue";
 import { useRoute } from "vue-router";
 
-const props = defineProps(["src"]);
+const props = defineProps({
+  src: { type: String, required: true }
+});
+
 const route = useRoute();
 
 let paramSrc: string | null = props.src;

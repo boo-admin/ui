@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequ
 import { showFullScreenLoading, tryHideFullScreenLoading } from "@/components/Loading/fullScreen";
 import { LOGIN_URL } from "@/config";
 import { ElMessage } from "element-plus";
-import { ReqPage, ResPage, ResultData } from "@/api/interface";
+import { ReqPage, RequestPage, ResPage, ResultData } from "@/api/interface";
 import { ResultEnum } from "@/enums/httpEnum";
 import { checkStatus } from "./helper/checkStatus";
 import { AxiosCanceler } from "./helper/axiosCancel";
@@ -165,13 +165,13 @@ const localHttp = new RequestHttp({
 
 export default localHttp;
 
-export const fetchListWithFunc = <T>(
-  list: (params: ReqPage) => Promise<Array<T>>,
-  count?: (params: ReqPage) => Promise<number>
+export const fetchListWithFunc = <T, Params extends RequestPage>(
+  list: (params: Params) => Promise<Array<T>>,
+  count?: (params: Params) => Promise<number>
 ): ((params) => Promise<ResultData<ResPage<T>>>) => {
   if (!count) {
     return (params: ReqPage) => {
-      return list(params).then(data => {
+      return list(toRequestPage(params)).then(data => {
         if (!data) {
           data = [];
         }
@@ -190,8 +190,8 @@ export const fetchListWithFunc = <T>(
   }
 
   return (params: ReqPage) => {
-    return count(params).then(total => {
-      return list(params).then(data => {
+    return count(toRequestPage(params)).then(total => {
+      return list(toRequestPage(params)).then(data => {
         if (!data) {
           data = [];
         }
@@ -258,3 +258,13 @@ export const deleteObject = <T>(url: string, params: { id: any; [key: string]: a
   }
   return localHttp.delete(url + "/" + id, params);
 };
+
+function toRequestPage<InParams extends ReqPage, OutParams extends RequestPage>(params: InParams): OutParams {
+  let { pageNum, pageSize, ...restParams } = params;
+  let result: OutParams = {
+    page_index: pageNum,
+    page_size: pageSize,
+    ...restParams
+  } as unknown as OutParams;
+  return result;
+}

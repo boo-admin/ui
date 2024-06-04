@@ -60,7 +60,7 @@ interface DrawerProps {
   row: Partial<boo.Employee>;
   departmentTree?: boo.Department[];
   api?: (params: any) => Promise<any>;
-  getTableList?: () => void;
+  update?: (id: any) => void;
 }
 
 const drawerVisible = ref(false);
@@ -92,9 +92,9 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      await drawerProps.value.api!(drawerProps.value.row);
+      let { id } = await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}用户成功！` });
-      drawerProps.value.getTableList!();
+      drawerProps.value.update!(id);
       drawerVisible.value = false;
     } catch (error) {
       console.log(error);
