@@ -68,7 +68,7 @@
     </template>
   </BooTableLayout>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup name="list_demo">
 import { ref, onMounted } from "vue";
 import BooTableLayout from "@/components/BooTableLayout/TableLayout.vue";
 import { useHandleData } from "@/hooks/useHandleData";
