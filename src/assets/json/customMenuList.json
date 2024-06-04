@@ -158,6 +158,20 @@
             "isAffix": false,
             "isKeepAlive": true
           }
+        },
+        {
+          "path": "/boo/list_demo",
+          "name": "list_demo",
+          "component": "/boo/demo/list",
+          "meta": {
+            "icon": "Menu",
+            "title": "新版列表演示",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
         }
       ]
     },
