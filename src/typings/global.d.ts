@@ -62,6 +62,7 @@ declare interface ViteEnv {
   VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE: boolean;
   VITE_DROP_CONSOLE: boolean;
   VITE_PWA: boolean;
+  VITE_DEVTOOLS: boolean;
   VITE_PUBLIC_PATH: string;
   VITE_MOCK_API_URL: string;
   VITE_PROXY: [string, string][];
