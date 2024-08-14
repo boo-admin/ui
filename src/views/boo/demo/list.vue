@@ -52,7 +52,7 @@
         <el-table-column prop="operation" label="操作" width="155">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.$index, scope.row)"> 添加 </el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)"> 忽略 </el-button>
+            <el-button type="danger" :icon="Delete" plain @click="handleDelete(scope.$index, scope.row)">忽略</el-button>
           </template>
         </el-table-column>
       </el-table>
