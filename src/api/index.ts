@@ -210,6 +210,51 @@ export const fetchListWithFunc = <T, Params extends RequestPage>(
   };
 };
 
+export const fetchOffsetLimitListWithFunc = <T, Params extends RequestOffsetLimit>(
+  list: (params: Params) => Promise<Array<T>>,
+  count?: (params: Params) => Promise<number>
+): ((params) => Promise<ResultData<ResPage<T>>>) => {
+  if (!count) {
+    return (params: ReqPage) => {
+      return list(toReqOffsetLimit(params)).then(data => {
+        if (!data) {
+          data = [];
+        }
+        return {
+          code: "",
+          msg: "",
+          data: {
+            total: data.length,
+            pageNum: 0,
+            pageSize: 0,
+            list: data
+          }
+        };
+      });
+    };
+  }
+
+  return (params: ReqPage) => {
+    return count(toReqOffsetLimit(params)).then(total => {
+      return list(toReqOffsetLimit(params)).then(data => {
+        if (!data) {
+          data = [];
+        }
+        return {
+          code: "",
+          msg: "",
+          data: {
+            total: total,
+            pageNum: params.pageNum,
+            pageSize: params.pageSize,
+            list: data
+          }
+        } as ResultData<ResPage<T>>;
+      });
+    });
+  };
+};
+
 export const wrapObjectResultWithFunc = <T>(
   list: (params) => Promise<Partial<T>>
 ): ((params) => Promise<ResultData<Partial<T>>>) => {
@@ -243,12 +288,25 @@ export const wrapArrayResultWithFunc = <T>(list: (params) => Promise<T[]>): ((pa
 };
 
 // 更新一个对象
-export const updateObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T[]> => {
+export const updateObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T> => {
   let id: string = params.id.toString();
   if (isNumber(params.id)) {
     id = params.id.toFixed(0);
   }
-  return localHttp.put<T[]>(url + "/" + id, params);
+  return localHttp.put<T>(url + "/" + id, params);
+};
+
+export interface ObjectInstance {
+  id: any;
+  [key: string]: any;
+}
+
+export const runMethodForObject = <T>(url: string, methodName: string, params: ObjectInstance): Promise<T> => {
+  let id: string = params.id.toString();
+  if (isNumber(params.id)) {
+    id = params.id.toFixed(0);
+  }
+  return localHttp.put<T>(url + "/" + id + methodName, params);
 };
 
 export const deleteObject = <T>(url: string, params: { id: any; [key: string]: any }): Promise<T> => {
@@ -259,11 +317,60 @@ export const deleteObject = <T>(url: string, params: { id: any; [key: string]: a
   return localHttp.delete(url + "/" + id, params);
 };
 
-function toRequestPage<InParams extends ReqPage, OutParams extends RequestPage>(params: InParams): OutParams {
+export function toRequestPage<InParams extends ReqPage, OutParams extends RequestPage>(params: InParams): OutParams {
   let { pageNum, pageSize, ...restParams } = params;
   let result: OutParams = {
     page_index: pageNum,
     page_size: pageSize,
+    ...restParams
+  } as unknown as OutParams;
+  return result;
+}
+
+export function toReqOffsetLimit<InParams extends ReqPage, OutParams extends RequestOffsetLimit>(params: InParams): OutParams {
+  let { pageNum, pageSize, ...restParams } = params;
+  if (!pageSize && pageSize <= 0) {
+    pageSize = 12;
+  }
+  if (pageNum && pageNum > 0) {
+    pageNum = pageNum - 1;
+  } else {
+    pageNum = 0;
+  }
+  const offset = pageNum * pageSize;
+  let result: OutParams = {
+    offset: offset,
+    limit: pageSize,
+    ...restParams
+  } as unknown as OutParams;
+  return result;
+}
+
+export function pageToOffsetLimit(
+  pageNum: number | null | undefined,
+  pageSize: number | null | undefined
+): { limit: number; offset: number } {
+  if (!pageSize || pageSize <= 0) {
+    pageSize = 12;
+  }
+  if (pageNum && pageNum > 0) {
+    pageNum = pageNum - 1;
+  } else {
+    pageNum = 0;
+  }
+
+  return { limit: pageSize!, offset: pageNum! * pageSize! };
+}
+
+export function toRequestOffsetLimit<InParams extends RequestPage, OutParams extends RequestOffsetLimit>(
+  params: InParams
+): OutParams {
+  let { page_index, page_size, ...restParams } = params;
+  const offsetLimit = pageToOffsetLimit(page_index, page_size);
+
+  let result: OutParams = {
+    offset: offsetLimit.offset,
+    limit: offsetLimit.limit,
     ...restParams
   } as unknown as OutParams;
   return result;

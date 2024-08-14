@@ -842,7 +842,7 @@
       "children": [
         {
           "path": "/system/accountManage",
-          "name": "accountManage",
+          "name": "oldAccountManage",
           "component": "/system/accountManage/index",
           "meta": {
             "icon": "Menu",
@@ -856,7 +856,7 @@
         },
         {
           "path": "/system/roleManage",
-          "name": "roleManage",
+          "name": "oldRoleManage",
           "component": "/system/roleManage/index",
           "meta": {
             "icon": "Menu",
@@ -870,11 +870,40 @@
         },
         {
           "path": "/system/menuMange",
-          "name": "menuMange",
+          "name": "oldMenuMange",
           "component": "/system/menuMange/index",
           "meta": {
             "icon": "Menu",
             "title": "菜单管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        
+        {
+          "path": "/boo/system/userManage",
+          "name": "userManage",
+          "component": "/boo/system/users/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "用户列表",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/hw/roles/list",
+          "name": "roleManage",
+          "component": "/boo/system/roles/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "角色列表",
             "isLink": "",
             "isHide": false,
             "isFull": false,

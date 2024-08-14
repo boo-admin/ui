@@ -1,6 +1,6 @@
 <template>
   <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="450px" :title="`${title}用户`">
-    <EmployeeForm ref="employeeFormRef" />
+    <UserForm ref="userFormRef" />
     <template #footer>
       <el-button @click="drawerVisible = false">取消</el-button>
       <el-button v-show="!isView" type="primary" @click="handleSubmit">确定</el-button>
@@ -8,19 +8,19 @@
   </el-drawer>
 </template>
 
-<script setup lang="ts" name="EmployeeDrawer">
+<script setup lang="ts" name="UserDrawer">
 import { nextTick, ref } from "vue";
-import EmployeeForm from "@/views/boo/system/employees/form.vue";
-import { EmployeeFormProps } from "./interface";
+import UserForm from "@/views/boo/system/users/form.vue";
+import { UserFormProps } from "./interface";
 
-const employeeFormRef = ref<InstanceType<typeof EmployeeForm> | null>(null);
+const userFormRef = ref<InstanceType<typeof UserForm> | null>(null);
 
 const title = ref("");
 const drawerVisible = ref(false);
 const isView = ref(false);
 
 // 接收父组件传过来的参数
-const acceptParams = (params: EmployeeFormProps) => {
+const acceptParams = (params: UserFormProps) => {
   isView.value = params.isView;
   title.value = params.title;
   const updateCallback = params.update;
@@ -32,12 +32,12 @@ const acceptParams = (params: EmployeeFormProps) => {
   };
   drawerVisible.value = true;
   nextTick(() => {
-    employeeFormRef.value!.acceptParams(params);
+    userFormRef.value!.acceptParams(params);
   });
 };
 
 const handleSubmit = () => {
-  return employeeFormRef.value!.handleSubmit();
+  userFormRef.value!.handleSubmit();
 };
 
 defineExpose({

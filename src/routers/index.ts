@@ -8,7 +8,7 @@ import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import customRoutes from "@/routers/custom";
 
 import NProgress from "@/config/nprogress";
-import { getCurrentUser } from "@/api/users";
+import { getCurrentUser } from "@/api/users/login";
 
 const mode = import.meta.env.VITE_ROUTER_MODE;
 

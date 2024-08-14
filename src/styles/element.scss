@@ -137,6 +137,22 @@
     }
   }
 
+  // 表格 header2 样式, 这个是我自已加的， 基于 table-header 改过来的
+  .table-header2 {
+    .header-button-lf {
+      float: left;
+    }
+    .header-button-ri {
+      float: right;
+    }
+    .table-button {
+      margin-bottom: 15px;
+    }
+    .table-input {
+      margin-bottom: 15px;
+    }
+  }
+
   // el-table 表格样式
   .el-table {
     flex: 1;

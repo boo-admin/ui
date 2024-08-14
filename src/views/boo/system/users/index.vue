@@ -1,10 +1,10 @@
 <template>
   <div class="main-box">
     <TreeFilter
-      ref="employeeDepartments"
+      ref="userDepartments"
       label="name"
       title="部门列表"
-      :request-api="getEmployeeDepartmentWithResultData"
+      :request-api="getUserDepartmentWithResultData"
       :default-value="initParam.department_id"
       @change="changeTreeFilter"
     />
@@ -12,25 +12,28 @@
       <ProTable
         ref="proTable"
         :columns="columns"
-        :request-api="getEmployeeListWithResultData"
+        :request-api="getUserListWithResultData"
         :init-param="initParam"
         :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
       >
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
-          <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增员工</el-button>
-          <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加员工</el-button>
-          <el-button type="primary" :icon="Download" plain @click="downloadFile">导出员工数据</el-button>
+          <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
+          <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加用户</el-button>
+          <el-button type="primary" :icon="Download" plain @click="downloadFile">导出用户数据</el-button>
         </template>
         <!-- 表格操作 -->
         <template #operation="scope">
           <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
           <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-          <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+          <el-button type="primary" link :icon="EditPen" @click="openChangePasswordDrawer(scope.row)">修改密码</el-button>
+          <el-button v-if="!scope.row.is_default" type="primary" :icon="Delete" @click="deleteAccount(scope.row)" link>
+            删除
+          </el-button>
         </template>
       </ProTable>
-      <EmployeeDrawer ref="drawerRef" />
-      <BindOrCreateUserDrawer ref="bindOrCreateUserDrawerRef" />
+      <UserDrawer ref="drawerRef" />
+      <ChangePasswordDrawer ref="changepasswordDrawerRef" />
       <ImportExcel ref="dialogRef">
         <template #options>
           <el-form-item label="数据覆盖 :">
@@ -44,7 +47,7 @@
     </div>
   </div>
 </template>
-<script setup lang="tsx" name="employee">
+<script setup lang="ts" name="useTreeFilter">
 import { ref, reactive } from "vue";
 import { boo } from "@/api/interface";
 import { ElMessageBox } from "element-plus";
@@ -53,31 +56,29 @@ import { useDownload } from "@/hooks/useDownload";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import EmployeeDrawer from "@/views/boo/system/employees/drawer.vue";
-import BindOrCreateUserDrawer from "@/views/boo/system/users/bind/drawer.vue";
+import UserDrawer from "@/views/boo/system/users/drawer.vue";
+import ChangePasswordDrawer from "@/views/boo/system/users/changepassworddrawer.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View } from "@element-plus/icons-vue";
 import { fetchOffsetLimitListWithFunc, wrapArrayResultWithFunc } from "@/api";
 import {
-  getEmployeeList,
-  getEmployeeCount,
-  deleteEmployee,
-  updateEmployee,
-  addEmployee,
-  exportEmployeeURL,
-  importEmployees,
-  getEmployeeDepartment,
-  pushToUser
-} from "@/api/users/employee";
-import { useAuthButtons } from "@/hooks/useAuthButtons";
-import { CreateUserFromEmployeeFormProps } from "../users/interface";
+  getUserList,
+  getUserCount,
+  deleteUser,
+  updateUser,
+  updateUserPassword,
+  addUser,
+  exportUserURL,
+  importUsers,
+  getUserDepartment
+} from "@/api/users/user";
 import dateformat from "dateformat";
 
-const getEmployeeDepartmentWithResultData = wrapArrayResultWithFunc(getEmployeeDepartment);
-const getEmployeeListWithResultData = fetchOffsetLimitListWithFunc(getEmployeeList, getEmployeeCount);
+const getUserDepartmentWithResultData = wrapArrayResultWithFunc(getUserDepartment);
+const getUserListWithResultData = fetchOffsetLimitListWithFunc(getUserList, getUserCount);
 
 // ProTable 实例
-const employeeDepartments = ref();
+const userDepartments = ref();
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
@@ -96,54 +97,27 @@ const changeTreeFilter = (val: string) => {
   initParam.department_id = val;
 };
 
-// 页面按钮权限（按钮权限既可以使用 hooks，也可以直接使用 v-auth 指令，指令适合直接绑定在按钮上，hooks 适合根据按钮权限显示不同的内容）
-const { BUTTONS } = useAuthButtons();
-
 // 表格配置项
-const columns = reactive<ColumnProps<boo.Employee>[]>([
+const columns = reactive<ColumnProps<boo.User>[]>([
   { type: "index", label: "#", width: 80 },
-  { prop: "name", label: "员工名", width: 120, search: { el: "input" } },
+  { prop: "name", label: "用户名", width: 120, search: { el: "input" } },
   { prop: "nickname", label: "昵称" },
   { prop: "fields.number", label: "工号" },
   { prop: "fields.email", label: "邮箱" },
-  {
-    prop: "user_id",
-    label: "能否登录",
-    render: scope => {
-      return (
-        <>
-          {BUTTONS.value.status ? (
-            <el-switch
-              model-value={scope.row.user_id && scope.row.user_id > 0}
-              active-text={scope.row.user_id && scope.row.user_id > 0 ? "可以" : "禁用"}
-              active-value={true}
-              inactive-value={false}
-              disabled={scope.row.user_id && scope.row.user_id > 0}
-              onClick={() => openbindOrCreateUserDrawer(scope.row)}
-            />
-          ) : (
-            <el-tag type={scope.row.user_id && scope.row.user_id ? "success" : "danger"}>
-              {scope.row.user_id && scope.row.user_id > 0 ? "可以" : "禁用"}
-            </el-tag>
-          )}
-        </>
-      );
-    }
-  },
   { prop: "updated_at", label: "更新时间", width: 180, render: scope => dateformat(scope.row.updated_at, "yyyy-MM-dd HH:mm:ss") },
   { prop: "operation", label: "操作", width: 330, fixed: "right" }
 ]);
 
 // 删除用户信息
-const deleteAccount = async (params: boo.Employee) => {
-  await useHandleData(deleteEmployee, { id: [params.id] }, `删除【${params.nickname}】用户`);
+const deleteAccount = async (params: boo.User) => {
+  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.nickname}】用户`);
   proTable.value?.getTableList();
 };
 
 // 导出用户列表
 const downloadFile = async () => {
   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportEmployeeURL(proTable.value?.searchParam), "用户列表", proTable.value?.searchParam)
+    useDownload(exportUserURL(proTable.value?.searchParam), "用户列表", proTable.value?.searchParam)
   );
 };
 
@@ -152,8 +126,8 @@ const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
 const batchAdd = () => {
   const params = {
     title: "用户",
-    templateApi: exportEmployeeURL({}),
-    importApi: data => importEmployees(data, uploadOptions.value),
+    templateApi: exportUserURL({}),
+    importApi: data => importUsers(data, uploadOptions.value),
     getTableList: proTable.value?.getTableList,
     customOptions: uploadOptions
   };
@@ -161,37 +135,32 @@ const batchAdd = () => {
 };
 
 // 打开 drawer(新增、查看、编辑)
-const drawerRef = ref<InstanceType<typeof EmployeeDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<boo.Employee> = {}) => {
+const drawerRef = ref<InstanceType<typeof UserDrawer> | null>(null);
+const openDrawer = (title: string, row: Partial<boo.User> = {}) => {
   let fields = row != null && row.fields != null ? { ...row.fields } : {};
-
   const params = {
     title,
+    isCreate: title === "新增",
     isView: title === "查看",
     row: { ...row, fields: fields },
-    departmentTree: employeeDepartments.value?.treeData,
-    api: title === "新增" ? addEmployee : title === "编辑" ? updateEmployee : undefined,
+    departmentTree: userDepartments.value?.treeData,
+    api: title === "新增" ? addUser : title === "编辑" ? updateUser : undefined,
     update: () => proTable.value?.getTableList()
   };
   drawerRef.value?.acceptParams(params);
 };
 
-// 打开 drawer(新增、查看、编辑)
-const bindOrCreateUserDrawerRef = ref<InstanceType<typeof BindOrCreateUserDrawer> | null>(null);
-const openbindOrCreateUserDrawer = (row: Partial<boo.Employee> = {}) => {
+let changepasswordDrawerRef = ref<InstanceType<typeof ChangePasswordDrawer> | null>(null);
+const openChangePasswordDrawer = (row: any) => {
   let fields = row != null && row.fields != null ? { ...row.fields } : {};
-
-  const params: CreateUserFromEmployeeFormProps = {
+  const params = {
     row: { ...row, fields: fields },
-    departmentTree: employeeDepartments.value?.treeData,
-    api: pushToUser,
-    update: (user_id: number): Promise<void> => {
-      //proTable.value?.getTableList()
-      row.user_id = user_id;
-
-      return Promise.resolve();
+    api: updateUserPassword,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    update: (): Promise<boolean | undefined> => {
+      return Promise.resolve(true);
     }
   };
-  bindOrCreateUserDrawerRef.value?.acceptParams(params);
+  changepasswordDrawerRef.value?.acceptParams(params);
 };
 </script>

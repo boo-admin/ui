@@ -118,6 +118,12 @@ export interface RequestPage {
   page_size: number;
 }
 
+// 分页请求参数
+export interface RequestOffsetLimit {
+  offset: number;
+  limit: number;
+}
+
 export namespace boo {
   export interface Department {
     id: number;
@@ -138,6 +144,16 @@ export namespace boo {
     nickname: string;
     description: string;
     disabled: boolean;
+    created_at: string;
+    updated_at: string;
+
+    [key: string]: any;
+  }
+
+  export interface Role {
+    id: number;
+    uuid: string;
+    name: string;
     created_at: string;
     updated_at: string;
 
